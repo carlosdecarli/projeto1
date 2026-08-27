@@ -1,18 +1,54 @@
-import json
 import os
+import sqlite3
 
-def load_data(filename):
-    with open("static/data/" + filename) as file:
-        return json.load(file)
+def get_db_connection():
+    conn = sqlite3.connect('banco.db')
+    conn.row_factory = sqlite3.Row 
+    return conn
 
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS note (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-def load_template(file):
-    with open('static/templates/'+file) as file:
+def load_data(filename=None):
+    init_db()  
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, title, content FROM note ORDER BY id')
+    rows = cursor.fetchall()
+    conn.close()
+    
+    notes = []
+    for row in rows:
+        notes.append({
+            'id': row['id'],
+            'titulo': row['title'],
+            'detalhes': row['content']
+        })
+    return notes
+
+def load_template(filename):
+    filepath = os.path.join('static', 'templates', filename)
+    with open(filepath, 'r', encoding='utf-8') as file:
         return file.read()
 
 def add_note(titulo, detalhes):
-    filepath = os.path.join('static', 'data', 'notes.json')
-    notes = load_data('notes.json')
-    notes.append({'titulo': titulo, 'detalhes': detalhes})
-    with open(filepath, 'w', encoding='utf-8') as file:
-        json.dump(notes, file, ensure_ascii=False, indent=2)
+    init_db()  
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        'INSERT INTO note (title, content) VALUES (?, ?)',
+        (titulo, detalhes)
+    )
+    conn.commit()
+    conn.close()
+

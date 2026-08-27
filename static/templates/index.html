@@ -2,24 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, inicial-scale=1.0">
 <title>Get-it</title>
+<link rel="stylesheet" href="{{{{ url_for('static', filename='css/getit.css') }}}}">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="appbar">
+    <img class="logo" src="{{{{ url_for('static', filename='img/logo-getit.png') }}}}" alt="Get-it Logo">
+    <p class="subtitle">Como o Post-it, mas com outro verbo</p>
+  </div>
 
-<img src="{{{{ url_for('static', filename='img/logo-getit.png') }}}}">
-<p>Como o Post-it, mas com outro verbo</p>
-
-<form action="/submit" method="POST">
-    <label for="titulo">Titulo</label>
-    <input id="titulo" type="text" name="titulo" />
-    <label for="detalhes">Detalhes</label>
-    <input id="detalhes" name="detalhes" />
-    <input type="submit" />
-  </form>
+<div class="form-card">
+    <h2 class="form-card-title">Criar nova nota</h2>
+    <form action="/submit" method="POST">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text" name="titulo" placeholder="Digite o título da nota" />
+      
+      <label for="detalhes">Detalhes</label>
+      <textarea id="detalhes" name="detalhes" placeholder="Digite os detalhes da nota"></textarea>
+      
+      <input type="submit" value="Criar Nota" />
+    </form>
+  </div>
   
-<ul>
-{notes}
-</ul>
+  <ul class="card-container">
+    {notes}
+  </ul>
 
 </body>
+<script src="{{{{ url_for('static', filename='js/getit.js') }}}}"></script>
 </html>
