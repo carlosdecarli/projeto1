@@ -1,4 +1,5 @@
 from flask import Flask, render_template_string, request, redirect
+from createdb import create_database
 import views
 from utils import delete_note, get_note_by_id, update_note
 
@@ -6,6 +7,7 @@ from utils import delete_note, get_note_by_id, update_note
 app = Flask(__name__)
 
 app.static_folder = 'static'
+create_database()
 
 @app.route('/')
 def index():

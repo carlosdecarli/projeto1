@@ -1,26 +1,8 @@
+
 import os
-import sqlite3
-
-def get_db_connection():
-    conn = sqlite3.connect('banco.db')
-    conn.row_factory = sqlite3.Row  # Permite acessar colunas por nome
-    return conn
-
-def init_db():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS note (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+from createdb import get_db_connection
 
 def load_data(filename=None):
-    init_db()  # Garante que o banco existe
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, title, content FROM note ORDER BY id')
@@ -42,7 +24,6 @@ def load_template(filename):
         return file.read()
 
 def add_note(titulo, detalhes):
-    init_db()  
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
