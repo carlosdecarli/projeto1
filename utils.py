@@ -3,7 +3,7 @@ import sqlite3
 
 def get_db_connection():
     conn = sqlite3.connect('banco.db')
-    conn.row_factory = sqlite3.Row 
+    conn.row_factory = sqlite3.Row  # Permite acessar colunas por nome
     return conn
 
 def init_db():
@@ -20,7 +20,7 @@ def init_db():
     conn.close()
 
 def load_data(filename=None):
-    init_db()  
+    init_db()  # Garante que o banco existe
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, title, content FROM note ORDER BY id')
@@ -48,6 +48,38 @@ def add_note(titulo, detalhes):
     cursor.execute(
         'INSERT INTO note (title, content) VALUES (?, ?)',
         (titulo, detalhes)
+    )
+    conn.commit()
+    conn.close()
+
+def delete_note(note_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM note WHERE id = ?', (note_id,))
+    conn.commit()
+    conn.close()
+
+def get_note_by_id(note_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, title, content FROM note WHERE id = ?', (note_id,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        return {
+            'id': row['id'],
+            'titulo': row['title'],
+            'detalhes': row['content']
+        }
+    return None
+
+def update_note(note_id, titulo, detalhes):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        'UPDATE note SET title = ?, content = ? WHERE id = ?',
+        (titulo, detalhes, note_id)
     )
     conn.commit()
     conn.close()
